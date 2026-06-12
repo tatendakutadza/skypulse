@@ -1,2 +1,0 @@
-# skypulse
-Weather Intelligence Platform
