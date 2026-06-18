@@ -1,7 +1,9 @@
 from typing import Generator
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
+from app.core.security import decode_token
+from app.models.user import User
 
 def get_db() -> Generator:
     db = SessionLocal()
@@ -10,6 +12,27 @@ def get_db() -> Generator:
     finally:
         db.close()
 
-def get_current_user():
-    # Will verify JWT cookie and return current user in Stage 3
-    pass
+def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
+
+    payload = decode_token(token)
+    if not payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token"
+        )
+
+    user = db.query(User).filter(User.id == int(payload["sub"])).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found"
+        )
+
+    return user
+

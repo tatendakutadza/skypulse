@@ -11,3 +11,9 @@ OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY", "")
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+
+class CookieConfig:
+    COOKIE_SECURE = os.getenv("COOKIE_SECURE", "False") == "True"
+    COOKIE_SAMESITE = "none" if COOKIE_SECURE else "lax"
+    COOKIE_HTTPONLY = True
+    COOKIE_MAX_AGE = 60 * 60 * 24 * 7  # 7 days in seconds
