@@ -36,3 +36,14 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
 
     return user
 
+def get_current_user_optional(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    if not token:
+        return None
+
+    payload = decode_token(token)
+    if not payload:
+        return None
+
+    user = db.query(User).filter(User.id == int(payload["sub"])).first()
+    return user

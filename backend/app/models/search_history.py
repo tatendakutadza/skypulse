@@ -11,4 +11,5 @@ class SearchHistory(Base):
     country = Column(String, nullable=True)
     lat = Column(Float, nullable=True)
     lon = Column(Float, nullable=True)
+    search_type = Column(String, default="current")  # "current" or "forecast"
     searched_at = Column(DateTime(timezone=True), server_default=func.now())
