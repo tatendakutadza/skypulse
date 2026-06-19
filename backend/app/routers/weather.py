@@ -16,37 +16,54 @@ router = APIRouter(prefix="/api/weather", tags=["weather"])
 @limiter.limit("60/minute")
 def get_current_weather(
     request: Request,
-    city: str = Query(..., max_length=100, pattern=r"^[a-zA-Z\s\-]+$"),
-    country: str = Query(None, max_length=100),
+    city: Optional[str] = Query(None, max_length=100, pattern=r"^[a-zA-Z\s\-]+$"),
+    country: Optional[str] = Query(None, max_length=100),
+    lat: Optional[float] = Query(None),
+    lon: Optional[float] = Query(None),
     units: str = Query("metric", pattern=r"^(metric|imperial)$"),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user_optional),
 ):
-    cache_key = cache.normalize_cache_key("current", city, country or "")
+    if not city and (lat is None or lon is None):
+        raise HTTPException(
+            status_code=400,
+            detail="Provide either 'city' or both 'lat' and 'lon'"
+        )
 
-    # 1. Check cache first
-    cached_data = cache.get_cached(db, cache_key)
-    if cached_data:
-        return {"source": "cache", "data": cached_data}
+    # Determine geo info based on input type
+    if city:
+        cache_key = cache.normalize_cache_key("current", city, country or "")
+        cached_data = cache.get_cached(db, cache_key)
+        if cached_data:
+            return {"source": "cache", "data": cached_data}
 
-    # 2. Cache miss — geocode then fetch from OWM
-    geo = openweather.fetch_geocode(city, country)
-    if not geo:
-        raise HTTPException(status_code=404, detail="City not found")
+        geo = openweather.fetch_geocode(city, country)
+        if not geo:
+            raise HTTPException(status_code=404, detail="City not found")
+    else:
+        cache_key = cache.normalize_cache_key("current", f"{lat}", f"{lon}")
+        cached_data = cache.get_cached(db, cache_key)
+        if cached_data:
+            return {"source": "cache", "data": cached_data}
 
+        geo = openweather.fetch_reverse_geocode(lat, lon)
+        if not geo:
+            raise HTTPException(status_code=404, detail="Location not found")
+
+    # Cache miss — fetch live weather
     weather_data = openweather.fetch_current_weather(geo["lat"], geo["lon"], units)
 
-    # 3. Store in cache — 10 min TTL
+    # Store in cache — 10 min TTL
     cache.set_cached(db, cache_key, weather_data, ttl=600)
 
-    # 4. Save to search history (Step 9)
+    # Save to search history
     history_entry = SearchHistory(
-    user_id=current_user.id if current_user else None,
-    city=geo["name"],
-    country=geo.get("country"),
-    lat=geo["lat"],
-    lon=geo["lon"],
-    search_type="current",
+        user_id=current_user.id if current_user else None,
+        city=geo["name"],
+        country=geo.get("country"),
+        lat=geo["lat"],
+        lon=geo["lon"],
+        search_type="current",
     )
     db.add(history_entry)
     db.commit()
@@ -62,6 +79,7 @@ def get_forecast(
     country: str = Query(None, max_length=100),
     units: str = Query("metric", pattern=r"^(metric|imperial)$"),
     db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional),
 ):
     cache_key = cache.normalize_cache_key("forecast", city, country or "")
 
@@ -79,16 +97,15 @@ def get_forecast(
     cache.set_cached(db, cache_key, forecast_data, ttl=1800)
 
     history_entry = SearchHistory(
-    user_id=current_user.id if current_user else None,
-    city=geo["name"],
-    country=geo.get("country"),
-    lat=geo["lat"],
-    lon=geo["lon"],
-    search_type="forecast",
+        user_id=current_user.id if current_user else None,
+        city=geo["name"],
+        country=geo.get("country"),
+        lat=geo["lat"],
+        lon=geo["lon"],
+        search_type="forecast",
     )
     db.add(history_entry)
     db.commit()
-
 
     return {"source": "live", "data": forecast_data}
 
