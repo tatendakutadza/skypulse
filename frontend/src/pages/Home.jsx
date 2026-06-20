@@ -7,65 +7,122 @@ function Home() {
   const [city, setCity] = useState('')
   const [weather, setWeather] = useState(null)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const { coords, error: geoError, loading: geoLoading, getLocation } = useGeolocation()
 
-  const handleSearch = async () => {
+  const fetchWeather = async (params) => {
     setError(null)
+    setLoading(true)
     try {
-      const response = await api.get('/api/weather/current', {
-        params: { city }
-      })
+      const response = await api.get('/api/weather/current', { params })
       setWeather(response.data.data)
     } catch (err) {
       console.error(err)
-      setError('Could not fetch weather. Try again.')
+      setError('Could not fetch weather. Check the city name and try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleUseLocation = () => {
-    getLocation()
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (!city.trim()) return
+    fetchWeather({ city })
   }
 
-  // When coords become available, fetch weather automatically
   useEffect(() => {
     if (coords) {
-      fetchByCoords(coords.lat, coords.lon)
+      fetchWeather({ lat: coords.lat, lon: coords.lon })
     }
   }, [coords])
 
-  const fetchByCoords = async (lat, lon) => {
-    setError(null)
-    try {
-      const response = await api.get('/api/weather/current', {
-        params: { lat, lon }
-      })
-      setWeather(response.data.data)
-    } catch (err) {
-      console.error(err)
-      setError('Could not fetch weather for your location.')
-    }
-  }
-
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>SkyPulse</h1>
+    <div style={{
+      position: 'relative',
+      minHeight: 'calc(100vh - 60px)',
+      background: `
+        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(20,40,80,0.5) 0%, transparent 70%),
+        linear-gradient(170deg, #0f1f3d 0%, #070c18 50%, #0a0e1a 100%)
+      `,
+      padding: '40px 24px',
+    }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto' }}>
 
-      <input
-        type="text"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-        placeholder="Enter a city"
-      />
-      <button onClick={handleSearch}>Search</button>
-      <button onClick={handleUseLocation} disabled={geoLoading}>
-        {geoLoading ? 'Locating...' : 'Use My Location'}
-      </button>
+        <form onSubmit={handleSearch} style={{ position: 'relative', marginBottom: '36px' }}>
+          <input
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Search a city — try Harare, Cape Town, London..."
+            style={{
+              width: '100%',
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid var(--sky-border)',
+              borderRadius: 'var(--r-pill)',
+              padding: '14px 130px 14px 20px',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.9rem',
+              color: 'var(--text-primary)',
+              outline: 'none',
+            }}
+          />
+          <div style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '6px' }}>
+            <button
+              type="button"
+              onClick={getLocation}
+              disabled={geoLoading}
+              style={{
+                padding: '9px 14px',
+                borderRadius: 'var(--r-pill)',
+                background: 'var(--sky-surface)',
+                border: '1px solid var(--sky-border)',
+                color: 'var(--text-secondary)',
+                fontSize: '0.72rem',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {geoLoading ? 'Locating…' : '📍 My Location'}
+            </button>
+            <button
+              type="submit"
+              style={{
+                width: '38px', height: '38px', borderRadius: '50%',
+                background: 'var(--sky-blue)', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'white',
+              }}
+              aria-label="Search"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+          </div>
+        </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {geoError && <p style={{ color: 'red' }}>{geoError}</p>}
+        {error && (
+          <p style={{ color: '#FCA5A5', fontSize: '0.85rem', marginBottom: '20px' }}>{error}</p>
+        )}
+        {geoError && (
+          <p style={{ color: '#FCA5A5', fontSize: '0.85rem', marginBottom: '20px' }}>{geoError}</p>
+        )}
 
-      <WeatherCard weather={weather} />
+        {loading && (
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Loading weather…</p>
+        )}
+
+        {!loading && !weather && !error && (
+          <div className="glass" style={{ padding: '40px 24px', textAlign: 'center' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+              Search a city or use your location to see current conditions.
+            </p>
+          </div>
+        )}
+
+        <WeatherCard weather={weather} />
+      </div>
     </div>
   )
 }

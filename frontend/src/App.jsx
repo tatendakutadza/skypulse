@@ -6,11 +6,15 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import ProtectedRoute from './components/ProtectedRoute'
+import Navbar from './components/Navbar'
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+
+        <Navbar />
+        
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

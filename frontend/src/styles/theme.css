@@ -1,0 +1,63 @@
+/* ── TOKENS ──────────────────────────────────────────── */
+:root {
+  --sky-deep:    #0a0e1a;
+  --sky-mid:     #111827;
+  --sky-surface: rgba(255,255,255,0.06);
+  --sky-border:  rgba(255,255,255,0.10);
+  --sky-blue:    #2E7FE8;
+  --sky-pulse:   #38BDF8;
+  --sky-warm:    #F59E0B;
+  --sky-danger:  #EF4444;
+  --sky-safe:    #10B981;
+  --text-primary:   #F0F4FF;
+  --text-secondary: rgba(240,244,255,0.55);
+  --text-dim:       rgba(240,244,255,0.30);
+  --font-display: 'DM Serif Display', serif;
+  --font-body:    'Space Grotesk', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --blur: blur(20px);
+  --r-card: 16px;
+  --r-pill: 999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--sky-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+button, input, select {
+  font-family: inherit;
+}
+
+/* visible focus ring for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--sky-pulse);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── GLASS CARD ───────────────────────────────────────── */
+.glass {
+  background: var(--sky-surface);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--sky-border);
+  border-radius: var(--r-card);
+}
