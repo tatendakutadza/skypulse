@@ -41,10 +41,7 @@ function Home() {
     <div style={{
       position: 'relative',
       minHeight: 'calc(100vh - 60px)',
-      background: `
-        radial-gradient(ellipse 80% 60% at 60% 0%, rgba(20,40,80,0.5) 0%, transparent 70%),
-        linear-gradient(170deg, #0f1f3d 0%, #070c18 50%, #0a0e1a 100%)
-      `,
+      background: 'var(--page-gradient)',
       padding: '40px 24px',
     }}>
       <div style={{ maxWidth: '720px', margin: '0 auto' }}>

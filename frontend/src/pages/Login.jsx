@@ -32,10 +32,7 @@ function Login() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: `
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(20,40,80,0.45) 0%, transparent 70%),
-        linear-gradient(170deg, #0f1f3d 0%, #070c18 50%, #0a0e1a 100%)
-      `,
+      background: 'var(--page-gradient)',
       padding: '24px',
     }}>
       <div className="glass" style={{ width: '100%', maxWidth: '380px', padding: '36px 32px' }}>
