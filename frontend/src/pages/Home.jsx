@@ -119,7 +119,7 @@ function Home() {
 
         <WeatherCard weather={weather} />
 
-        <ExploreGrid onSelectCity={handleExploreSelect} loadingCity={loadingCity} />
+        <ExploreGrid onSelectCity={handleExploreSelect} />
       </div>
     </div>
   )

@@ -91,18 +91,3 @@ select:focus-visible,
   border: 1px solid var(--sky-border);
   border-radius: var(--r-card);
 }
-
-/* ── AUTH SPLIT LAYOUT — collapse to single column on mobile ── */
-.auth-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-@media (max-width: 760px) {
-  .auth-brand-panel {
-    display: none !important;
-  }
-  .auth-grid {
-    grid-template-columns: 1fr;
-  }
-}

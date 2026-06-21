@@ -28,104 +28,86 @@ function Register() {
   }
 
   return (
-    <div className="auth-grid" style={{
+    <div style={{
       minHeight: 'calc(100vh - 60px)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       background: 'var(--page-gradient)',
+      padding: '24px',
     }}>
-      <div className="auth-brand-panel" style={{
-        position: 'relative', display: 'flex', flexDirection: 'column',
-        justifyContent: 'center', padding: '60px', overflow: 'hidden',
-        borderRight: '1px solid var(--sky-border)',
-      }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'radial-gradient(circle at 30% 30%, rgba(56,189,248,0.12) 0%, transparent 60%)',
-        }} />
-        <div style={{ position: 'relative', zIndex: 1 }}>
+      <div className="glass" style={{ width: '100%', maxWidth: '380px', padding: '36px 32px' }}>
+
+        <div style={{ marginBottom: '28px' }}>
           <div style={{
             fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: 'var(--sky-pulse)', marginBottom: '16px',
+            textTransform: 'uppercase', color: 'var(--sky-pulse)', marginBottom: '8px',
           }}>
             Get started
           </div>
-          <h2 style={{
-            fontFamily: 'var(--font-display)', fontStyle: 'italic',
-            fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', lineHeight: 1.25,
-            color: 'var(--text-primary)', maxWidth: '320px',
-          }}>
-            Save the places<br />you check most.
-          </h2>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ width: '100%', maxWidth: '360px' }}>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '1.9rem', marginBottom: '6px' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '2rem' }}>
             Create account
           </h1>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '28px' }}>
-            Free. Takes under a minute.
-          </p>
-
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Email</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                style={{
-                  width: '100%', background: 'var(--sky-surface)',
-                  border: '1px solid var(--sky-border)', borderRadius: '10px',
-                  padding: '12px 16px', fontFamily: 'var(--font-body)',
-                  fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none',
-                }}
-              />
-            </label>
-
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                Password <span style={{ color: 'var(--text-dim)' }}>(min. 8 characters)</span>
-              </span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-                style={{
-                  width: '100%', background: 'var(--sky-surface)',
-                  border: '1px solid var(--sky-border)', borderRadius: '10px',
-                  padding: '12px 16px', fontFamily: 'var(--font-body)',
-                  fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none',
-                }}
-              />
-            </label>
-
-            {error && <p style={{ fontSize: '0.78rem', color: '#FCA5A5' }}>{error}</p>}
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                marginTop: '8px', padding: '13px', borderRadius: 'var(--r-pill)',
-                background: 'var(--sky-blue)', border: 'none', color: 'white',
-                fontSize: '0.85rem', fontWeight: 600,
-                cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
-              }}
-            >
-              {loading ? 'Creating account…' : 'Create account'}
-            </button>
-          </form>
-
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '24px' }}>
-            Already have an account?{' '}
-            <Link to="/login" style={{ color: 'var(--sky-pulse)', textDecoration: 'none', fontWeight: 600 }}>
-              Sign in
-            </Link>
-          </p>
         </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Email</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{
+                width: '100%', background: 'var(--sky-surface)',
+                border: '1px solid var(--sky-border)', borderRadius: '10px',
+                padding: '12px 16px', fontFamily: 'var(--font-body)',
+                fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none',
+              }}
+            />
+          </label>
+
+          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+              Password <span style={{ color: 'var(--text-dim)' }}>(min. 8 characters)</span>
+            </span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+              style={{
+                width: '100%', background: 'var(--sky-surface)',
+                border: '1px solid var(--sky-border)', borderRadius: '10px',
+                padding: '12px 16px', fontFamily: 'var(--font-body)',
+                fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none',
+              }}
+            />
+          </label>
+
+          {error && <p style={{ fontSize: '0.78rem', color: '#FCA5A5' }}>{error}</p>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              marginTop: '8px', padding: '13px', borderRadius: 'var(--r-pill)',
+              background: 'var(--sky-blue)', border: 'none', color: 'white',
+              fontSize: '0.85rem', fontWeight: 600,
+              cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+            }}
+          >
+            {loading ? 'Creating account…' : 'Create account'}
+          </button>
+        </form>
+
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '24px', textAlign: 'center' }}>
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: 'var(--sky-pulse)', textDecoration: 'none', fontWeight: 600 }}>
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   )
