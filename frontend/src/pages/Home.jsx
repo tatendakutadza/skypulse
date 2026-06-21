@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../services/api'
 import WeatherCard from '../components/WeatherCard'
+import ExploreGrid from '../components/ExploreGrid'
 import useGeolocation from '../hooks/useGeolocation'
 
 function Home() {
@@ -8,20 +9,24 @@ function Home() {
   const [weather, setWeather] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [loadingCity, setLoadingCity] = useState(null)
 
   const { coords, error: geoError, loading: geoLoading, getLocation } = useGeolocation()
 
-  const fetchWeather = async (params) => {
+  const fetchWeather = async (params, label = null) => {
     setError(null)
     setLoading(true)
+    if (label) setLoadingCity(label)
     try {
       const response = await api.get('/api/weather/current', { params })
       setWeather(response.data.data)
+      if (params.city) setCity(params.city)
     } catch (err) {
       console.error(err)
       setError('Could not fetch weather. Check the city name and try again.')
     } finally {
       setLoading(false)
+      setLoadingCity(null)
     }
   }
 
@@ -29,6 +34,10 @@ function Home() {
     e.preventDefault()
     if (!city.trim()) return
     fetchWeather({ city })
+  }
+
+  const handleExploreSelect = (cityName) => {
+    fetchWeather({ city: cityName }, cityName)
   }
 
   useEffect(() => {
@@ -39,14 +48,13 @@ function Home() {
 
   return (
     <div style={{
-      position: 'relative',
       minHeight: 'calc(100vh - 60px)',
       background: 'var(--page-gradient)',
-      padding: '40px 24px',
+      padding: '40px 24px 80px',
     }}>
-      <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '760px', margin: '0 auto' }}>
 
-        <form onSubmit={handleSearch} style={{ position: 'relative', marginBottom: '36px' }}>
+        <form onSubmit={handleSearch} style={{ position: 'relative', marginBottom: '32px' }}>
           <input
             type="text"
             value={city}
@@ -54,7 +62,7 @@ function Home() {
             placeholder="Search a city — try Harare, Cape Town, London..."
             style={{
               width: '100%',
-              background: 'rgba(255,255,255,0.06)',
+              background: 'var(--sky-surface)',
               border: '1px solid var(--sky-border)',
               borderRadius: 'var(--r-pill)',
               padding: '14px 130px 14px 20px',
@@ -70,14 +78,10 @@ function Home() {
               onClick={getLocation}
               disabled={geoLoading}
               style={{
-                padding: '9px 14px',
-                borderRadius: 'var(--r-pill)',
-                background: 'var(--sky-surface)',
-                border: '1px solid var(--sky-border)',
-                color: 'var(--text-secondary)',
-                fontSize: '0.72rem',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
+                padding: '9px 14px', borderRadius: 'var(--r-pill)',
+                background: 'var(--sky-surface)', border: '1px solid var(--sky-border)',
+                color: 'var(--text-secondary)', fontSize: '0.72rem',
+                cursor: 'pointer', whiteSpace: 'nowrap',
               }}
             >
               {geoLoading ? 'Locating…' : '📍 My Location'}
@@ -87,8 +91,7 @@ function Home() {
               style={{
                 width: '38px', height: '38px', borderRadius: '50%',
                 background: 'var(--sky-blue)', border: 'none', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
               }}
               aria-label="Search"
             >
@@ -99,19 +102,15 @@ function Home() {
           </div>
         </form>
 
-        {error && (
-          <p style={{ color: '#FCA5A5', fontSize: '0.85rem', marginBottom: '20px' }}>{error}</p>
-        )}
-        {geoError && (
-          <p style={{ color: '#FCA5A5', fontSize: '0.85rem', marginBottom: '20px' }}>{geoError}</p>
-        )}
+        {error && <p style={{ color: '#FCA5A5', fontSize: '0.85rem', marginBottom: '20px' }}>{error}</p>}
+        {geoError && <p style={{ color: '#FCA5A5', fontSize: '0.85rem', marginBottom: '20px' }}>{geoError}</p>}
 
-        {loading && (
+        {loading && !loadingCity && (
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Loading weather…</p>
         )}
 
         {!loading && !weather && !error && (
-          <div className="glass" style={{ padding: '40px 24px', textAlign: 'center' }}>
+          <div className="glass" style={{ padding: '40px 24px', textAlign: 'center', marginBottom: '8px' }}>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               Search a city or use your location to see current conditions.
             </p>
@@ -119,6 +118,8 @@ function Home() {
         )}
 
         <WeatherCard weather={weather} />
+
+        <ExploreGrid onSelectCity={handleExploreSelect} loadingCity={loadingCity} />
       </div>
     </div>
   )

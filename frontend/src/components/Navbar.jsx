@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import UserMenu from './UserMenu'
 
 function Logo() {
   return (
@@ -27,29 +27,19 @@ function ThemeToggle() {
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       style={{
-        width: '34px',
-        height: '34px',
-        borderRadius: '50%',
-        background: 'var(--sky-surface)',
-        border: '1px solid var(--sky-border)',
-        color: 'var(--text-secondary)',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: '34px', height: '34px', borderRadius: '50%',
+        background: 'var(--sky-surface)', border: '1px solid var(--sky-border)',
+        color: 'var(--text-secondary)', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
     >
       {isDark ? (
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="5" />
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
       ) : (
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -61,34 +51,23 @@ function ThemeToggle() {
 }
 
 function Navbar() {
-  const { user, logout } = useAuth()
   const location = useLocation()
 
   const linkStyle = (path) => ({
-    fontSize: '0.75rem',
-    fontWeight: 500,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    textDecoration: 'none',
+    fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em',
+    textTransform: 'uppercase', textDecoration: 'none',
     color: location.pathname === path ? 'var(--text-primary)' : 'var(--text-secondary)',
-    padding: '6px 14px',
-    borderRadius: 'var(--r-pill)',
+    padding: '6px 14px', borderRadius: 'var(--r-pill)',
     border: location.pathname === path ? '1px solid var(--sky-border)' : '1px solid transparent',
     background: location.pathname === path ? 'var(--sky-surface)' : 'transparent',
   })
 
   return (
     <nav style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '12px 24px',
-      background: 'var(--nav-bg)',
-      backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid var(--sky-border)',
+      position: 'sticky', top: 0, zIndex: 1000,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '12px 24px', background: 'var(--nav-bg)',
+      backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--sky-border)',
     }}>
       <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
         <Logo />
@@ -99,37 +78,8 @@ function Navbar() {
 
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         <Link to="/" style={linkStyle('/')}>Home</Link>
-
-        {user ? (
-          <>
-            <Link to="/dashboard" style={linkStyle('/dashboard')}>Dashboard</Link>
-            <Link to="/settings" style={linkStyle('/settings')}>Settings</Link>
-            <button
-              onClick={logout}
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'var(--text-secondary)',
-                padding: '6px 14px',
-                borderRadius: 'var(--r-pill)',
-                border: '1px solid var(--sky-border)',
-                background: 'var(--sky-surface)',
-                cursor: 'pointer',
-              }}
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" style={linkStyle('/login')}>Login</Link>
-            <Link to="/register" style={linkStyle('/register')}>Register</Link>
-          </>
-        )}
-
         <ThemeToggle />
+        <UserMenu />
       </div>
     </nav>
   )
