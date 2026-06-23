@@ -75,3 +75,12 @@ def logout(response: Response):
         samesite=CookieConfig.COOKIE_SAMESITE,
     )
     return {"message": "Logged out successfully"}
+
+@router.delete("/me")
+def delete_account(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    db.delete(current_user)
+    db.commit()
+    return {"message": "Account deleted"}

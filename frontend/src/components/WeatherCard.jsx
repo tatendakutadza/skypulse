@@ -3,7 +3,32 @@ function WeatherCard({ weather }) {
 
   const { main, wind, visibility, weather: weatherDesc, name } = weather
   const description = weatherDesc?.[0]?.description || ''
-  const windKmh = (wind.speed * 3.6).toFixed(0)
+
+  const visibilityUnit = typeof localStorage !== 'undefined'
+    ? localStorage.getItem('skypulse_visibility_unit') || 'km'
+    : 'km'
+  const visibilityValue = visibilityUnit === 'mi'
+    ? (visibility / 1609.34).toFixed(1)
+    : (visibility / 1000).toFixed(1)
+
+  // wind.speed arrives in m/s (metric units from backend)
+  const windUnit = typeof localStorage !== 'undefined'
+    ? localStorage.getItem('skypulse_wind_unit') || 'kmh'
+    : 'kmh'
+  const windSpeedMs = wind.speed
+  const windDisplay = {
+    kmh: `${(windSpeedMs * 3.6).toFixed(0)} km/h`,
+    mph: `${(windSpeedMs * 2.23694).toFixed(0)} mph`,
+    ms: `${windSpeedMs.toFixed(1)} m/s`,
+  }[windUnit]
+
+  // main.pressure arrives in hPa
+  const pressureUnit = typeof localStorage !== 'undefined'
+    ? localStorage.getItem('skypulse_pressure_unit') || 'hpa'
+    : 'hpa'
+  const pressureDisplay = pressureUnit === 'inhg'
+    ? `${(main.pressure * 0.02953).toFixed(2)} inHg`
+    : `${main.pressure} hPa`
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -61,9 +86,9 @@ function WeatherCard({ weather }) {
 
       <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
         <StatChip label="Humidity" value={`${main.humidity}%`} dotColor="var(--sky-pulse)" />
-        <StatChip label="Wind" value={`${windKmh} km/h`} dotColor="var(--sky-warm)" />
-        <StatChip label="Pressure" value={`${main.pressure} hPa`} dotColor="#a78bfa" />
-        <StatChip label="Visibility" value={`${(visibility / 1000).toFixed(1)} km`} dotColor="var(--sky-safe)" />
+        <StatChip label="Wind" value={windDisplay} dotColor="var(--sky-warm)" />
+        <StatChip label="Pressure" value={pressureDisplay} dotColor="#a78bfa" />
+        <StatChip label="Visibility" value={`${visibilityValue} ${visibilityUnit}`} dotColor="var(--sky-safe)" />
       </div>
     </div>
   )

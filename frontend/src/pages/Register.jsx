@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import PasswordField from '../components/PasswordField'
 
 function Register() {
   const [email, setEmail] = useState('')
@@ -28,74 +29,101 @@ function Register() {
   }
 
   return (
-    <div style={{
-      minHeight: 'calc(100vh - 60px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--page-gradient)',
-      padding: '24px',
-    }}>
-      <div className="glass" style={{ width: '100%', maxWidth: '380px', padding: '36px 32px' }}>
-
+    <div
+      style={{
+        minHeight: 'calc(100vh - 60px)',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--page-gradient)',
+        padding: '40px 24px',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        className="glass"
+        style={{
+          width: '100%',
+          maxWidth: '380px',
+          padding: '36px 32px',
+          margin: '0 auto',
+        }}
+      >
         <div style={{ marginBottom: '28px' }}>
-          <div style={{
-            fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.15em',
-            textTransform: 'uppercase', color: 'var(--sky-pulse)', marginBottom: '8px',
-          }}>
+          <div
+            style={{
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'var(--sky-pulse)',
+              marginBottom: '8px',
+            }}
+          >
             Get started
           </div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '2rem' }}>
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontSize: '2rem',
+              color: 'var(--text-primary)',
+              margin: 0,
+            }}
+          >
             Create account
           </h1>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Email</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+              Email
+            </span>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               style={{
-                width: '100%', background: 'var(--sky-surface)',
-                border: '1px solid var(--sky-border)', borderRadius: '10px',
-                padding: '12px 16px', fontFamily: 'var(--font-body)',
-                fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none',
+                width: '100%',
+                background: 'var(--sky-surface)',
+                border: '1px solid var(--sky-border)',
+                borderRadius: '10px',
+                padding: '12px 16px',
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.88rem',
+                color: 'var(--text-primary)',
+                outline: 'none',
               }}
             />
           </label>
 
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-              Password <span style={{ color: 'var(--text-dim)' }}>(min. 8 characters)</span>
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              style={{
-                width: '100%', background: 'var(--sky-surface)',
-                border: '1px solid var(--sky-border)', borderRadius: '10px',
-                padding: '12px 16px', fontFamily: 'var(--font-body)',
-                fontSize: '0.88rem', color: 'var(--text-primary)', outline: 'none',
-              }}
-            />
-          </label>
+          <PasswordField
+            value={password}
+            onChange={setPassword}
+            hint="(min. 8 characters)"
+            required
+            minLength={8}
+          />
 
-          {error && <p style={{ fontSize: '0.78rem', color: '#FCA5A5' }}>{error}</p>}
+          {error && <p style={{ fontSize: '0.78rem', color: '#FCA5A5', margin: 0 }}>{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
             style={{
-              marginTop: '8px', padding: '13px', borderRadius: 'var(--r-pill)',
-              background: 'var(--sky-blue)', border: 'none', color: 'white',
-              fontSize: '0.85rem', fontWeight: 600,
-              cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+              marginTop: '8px',
+              padding: '13px',
+              borderRadius: 'var(--r-pill)',
+              background: 'var(--sky-blue)',
+              border: 'none',
+              color: '#ffffff',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: loading ? 'default' : 'pointer',
+              opacity: loading ? 0.6 : 1,
             }}
           >
             {loading ? 'Creating account…' : 'Create account'}
